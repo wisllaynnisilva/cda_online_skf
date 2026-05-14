@@ -1,0 +1,29 @@
+name: cda_online_skf
+
+on:
+  schedule:
+    - cron: '0 6 * * *'  # Todo dia às 03:00 no Brasil (UTC-3)
+  workflow_dispatch:
+
+jobs:
+  run-notebook:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout do repositório
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Executar script
+        env:
+          GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
+          BASE_GERMANO: ${{ secrets.BASE_GERMANO }}
+          BASE_UBU: ${{ secrets.BASE_UBU }}
+          SKF_PASSWORD: ${{ secrets.SKF_PASSWORD }}
+          SKF_USERNAME: ${{ secrets.SKF_USERNAME }}
+        run: |
+          python cda_online_skf.py

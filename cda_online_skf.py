@@ -13,6 +13,10 @@ import json
 import jwt
 import sys
 
+import gspread
+from google.oauth2.service_account import Credentials
+from gspread_dataframe import get_as_dataframe, set_with_dataframe
+
 """# **2. DADOS DE ACESSO**
 
 ## **2.1. Credenciais**
@@ -78,11 +82,6 @@ def obter_arvore_hierarquia(token, base_url):
 
 ### **2.4.1. Autenticação no Sheets**
 """
-
-import gspread
-from google.colab import auth
-from gspread_dataframe import set_with_dataframe, get_as_dataframe
-from google.auth import default
 
 # Lê a variável de ambiente com o conteúdo do JSON da conta de serviço
 service_account_info = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT"])

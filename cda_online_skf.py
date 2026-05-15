@@ -814,7 +814,7 @@ else:
 """## **9.4. Tratamento de duplicatas**"""
 
 # Nome da planilha e aba
-planilha_id = "1UK6AatDxCdqg8NZxgL8ZThyCSNXOh03_AY4jtGaumXc"
+planilha_id = "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo"
 nome_da_aba = "Sheet1"
 
 # Abre a planilha e aba

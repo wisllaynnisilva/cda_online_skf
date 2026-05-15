@@ -5,7 +5,6 @@
 """
 
 from datetime import datetime, timedelta, timezone
-from IPython.display import display
 import pandas as pd
 import requests
 import urllib3

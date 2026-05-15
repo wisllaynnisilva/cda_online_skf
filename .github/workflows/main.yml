@@ -25,9 +25,7 @@ jobs:
       - name: Executar script
         env:
           GOOGLE_SERVICE_ACCOUNT: ${{ secrets.GOOGLE_SERVICE_ACCOUNT }}
-          BASE_GERMANO: ${{ secrets.BASE_GERMANO }}
-          BASE_UBU: ${{ secrets.BASE_UBU }}
-          SKF_PASSWORD: ${{ secrets.SKF_PASSWORD }}
-          SKF_USERNAME: ${{ secrets.SKF_USERNAME }}
+          SKF_CREDENTIALS: ${{ secrets.SKF_CREDENTIALS }}
+          SKF_BASE: ${{ secrets.SKF_BASE }}
         run: |
           python cda_online_skf.py

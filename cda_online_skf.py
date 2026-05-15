@@ -825,7 +825,7 @@ aba = planilha.worksheet(nome_da_aba)
 df = get_as_dataframe(aba, evaluate_formulas=True).dropna(how="all")
 
 # Remove duplicatas com base nas colunas chave
-colunas_chave = ['ReadingTimeUTC', 'PointID', 'Level', 'Units']
+colunas_chave = ['ReadingTimeUTC', 'PointID', 'Level']
 df_limpo = df.drop_duplicates(subset=colunas_chave, keep='first')
 
 # Limpa aba (opcional, mas garante que não fica lixo antigo abaixo)

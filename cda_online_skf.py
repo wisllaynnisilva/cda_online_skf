@@ -22,21 +22,14 @@ from gspread_dataframe import get_as_dataframe, set_with_dataframe
 ## **2.1. Credenciais**
 """
 
-CREDENTIALS = {
-    "username": os.getenv("SKF_USERNAME"),
-    "password": os.getenv("SKF_PASSWORD"),
-    "grant_type": "password"
-}
+CREDENTIALS = json.loads(os.environ["SKF_CREDENTIALS"])
 
 """## **2.2. URL's**
 
 ### **2.2.1. Base**
 """
 
-BASE_URLS = {
-    "ubu": os.getenv("BASE_UBU"),
-    "germano": os.getenv("BASE_GERMANO")
-}
+BASE_URLS = json.loads(os.environ["SKF_BASE"])
 
 """### **2.2.2. Endpoint**"""
 

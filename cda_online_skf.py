@@ -599,7 +599,7 @@ print(f"Total de registros: {len(df_alarms)}")
 """## **7.3. Carga de Sheets**"""
 
 # Nome da planilha
-planilha_id = "1FxNznh_ouoDljB0Zw9pjH3GEEe0J520_AD4lNMzOM04"
+planilha_id = "172uMRb6-j8yitUVbCYp-iHWcSQGYpi6oqSX1gan2DXU"
 nome_da_aba = "Sheet1"
 
 # Abre a planilha
@@ -777,7 +777,7 @@ print(f"{len(df_trendMeasurements)} medições finais")
 """## **9.3. Carga de Sheets**"""
 
 # Nome da planilha e aba
-planilha_id = "1UK6AatDxCdqg8NZxgL8ZThyCSNXOh03_AY4jtGaumXc"
+planilha_id = "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo"
 nome_da_aba = "Sheet1"
 
 # Abre a planilha e aba

@@ -91,9 +91,79 @@ creds = Credentials.from_service_account_info(service_account_info, scopes=SCOPE
 # Autentica no Google Sheets
 gc = gspread.authorize(creds)
 
-"""# **3. REQUISIÇÃO: MACHINES**
+"""# **3. REQUISIÇÃO: HIERARCHY**
 
 ## **3.1. Execução**
+"""
+
+def flatten_hierarchy(data, parent_id=None, parent_name=None, rows=None):
+    if rows is None:
+        rows = []
+
+    for item in data:
+        rows.append({
+            "id": item.get("id"),
+            "name": item.get("name"),
+            "description": item.get("description"),
+            "path": item.get("path"),
+            "tag": item.get("tag"),
+            "active": item.get("active"),
+            "typeName": item.get("typeName"),
+            "typeId": item.get("typeId"),
+            "status": item.get("status"),
+            "src": item.get("src"),
+            "parent_id": parent_id,
+            "parent_name": parent_name
+        })
+
+        children = item.get("children")
+        if children:
+            flatten_hierarchy(
+                children,
+                parent_id=item.get("id"),
+                parent_name=item.get("name"),
+                rows=rows
+            )
+
+    return rows
+
+
+dfs = []
+
+for origem, base_url in BASE_URLS.items():
+    token = obter_token(base_url)
+    data_raw = obter_arvore_hierarquia(token, base_url)
+
+    rows = flatten_hierarchy(data_raw)
+
+    df = pd.DataFrame(rows)
+    df["origem"] = origem
+
+    dfs.append(df)
+
+df_hierarchy = pd.concat(dfs, ignore_index=True)
+
+"""## **3.5. Carga no Sheets**"""
+
+# Nome da planilha
+planilha_id = "1w3hVCO0DgMKd9EkeZCRlDy_UXPSMQgNaPJCAJtmgYjI"
+nome_da_aba = "Sheet1"
+
+# Abre a planilha
+planilha = gc.open_by_key(planilha_id)
+aba = planilha.worksheet(nome_da_aba)
+
+# Limpa a aba antes de escrever os dados
+aba.clear()
+
+# Envia o DataFrame para a aba
+set_with_dataframe(aba, df_hierarchy)
+
+print("Dados enviados com sucesso para o Google Sheets!")
+
+"""# **4. REQUISIÇÃO: MACHINES**
+
+## **4.1. Execução**
 """
 
 def get_machines(token, base_url, origem):
@@ -130,7 +200,7 @@ def get_all_machines():
 
 df_machines = get_all_machines()
 
-"""## **3.2. Estrutura e organização**"""
+"""## **4.2. Estrutura e organização**"""
 
 # Garantir string
 df_machines["path"] = df_machines["path"].fillna("").astype(str)
@@ -154,12 +224,12 @@ df_machines = df_machines[
     df_machines["path_1"] == df_machines["origem"].map(mapa)
 ]
 
-"""## **3.3. DataFrame**"""
+"""## **4.3. DataFrame**"""
 
 # Selecionar colunas
 df_machine = df_machines[['origem', 'id', 'name', 'path']].copy()
 
-"""## **3.4. Lista de ID's**"""
+"""## **4.4. Lista de ID's**"""
 
 # Extrair lista de IDs
 machine_ids = df_machine['id'].tolist()
@@ -185,9 +255,9 @@ set_with_dataframe(aba, df_machine)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **4. REQUISIÇÃO: SUBMACHINES**
+"""# **5. REQUISIÇÃO: SUBMACHINES**
 
-## **4.1. Execução**
+## **5.1. Execução**
 """
 
 def get_submachines(data, parent_name=None, submachines=None):
@@ -228,7 +298,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_submachines = pd.concat(dfs, ignore_index=True)
 
-"""## **4.2. Estrutura e organização**"""
+"""## **5.2. Estrutura e organização**"""
 
 # Garantir string
 df_submachines["path"] = df_submachines["path"].fillna("").astype(str)
@@ -252,11 +322,11 @@ df_submachines = df_submachines[
     df_submachines["path_1"] == df_submachines["origem"].map(mapa)
 ]
 
-"""## **4.3. DataFrame**"""
+"""## **5.3. DataFrame**"""
 
 df_submachines = df_submachines[['origem', 'id', 'name', 'description', 'parent', 'path', 'status', 'active']]
 
-"""## **4.4. Carga no Sheets**"""
+"""## **5.4. Carga no Sheets**"""
 
 # Nome da planilha
 planilha_id = "115Ilr5gw8jkqVaHJmotdo5gVxwfLpx07tCTdMwQLLzc"
@@ -274,9 +344,9 @@ set_with_dataframe(aba, df_submachines)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **5. REQUISIÇÃO: MACHINE PART**
+"""# **6. REQUISIÇÃO: MACHINE PART**
 
-## **5.1. Execução**
+## **6.1. Execução**
 """
 
 def get_machine_parts(token, base_url, machine_ids, origem):
@@ -343,7 +413,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_parts = pd.concat(dfs, ignore_index=True)
 
-"""## **5.2. Estrutura e organização**"""
+"""## **6.2. Estrutura e organização**"""
 
 # merge
 df_parts = df_parts.merge(
@@ -375,7 +445,7 @@ df_parts = df_parts[
     df_parts["path_1"] == df_parts["origem"].map(mapa)
 ]
 
-"""## **5.3. DataFrame**"""
+"""## **6.3. DataFrame**"""
 
 colunas = [
     "origem", "path", "MachineId", "PartID", "PartName", "Type", "Ratio",
@@ -385,7 +455,7 @@ colunas = [
 
 df_parts = df_parts[colunas].drop_duplicates()
 
-"""## **5.4. Carga no Sheets**"""
+"""## **6.4. Carga no Sheets**"""
 
 # Nome da planilha
 planilha_id = "1ZOW0VeSOqSjCNZVvO48TxnAt6FdKhBSuCwFLq23Rd7k"
@@ -403,9 +473,9 @@ set_with_dataframe(aba, df_parts)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **6. REQUISIÇÃO: POINTS**
+"""# **7. REQUISIÇÃO: POINTS**
 
-## **6.1. Execução**
+## **7.1. Execução**
 """
 
 def get_points(token, base_url, machine_ids, origem):
@@ -444,7 +514,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_points = pd.concat(dfs, ignore_index=True)
 
-"""## **6.2. Estrutura e organização**"""
+"""## **7.2. Estrutura e organização**"""
 
 def explode_points(df_raw):
     registros = []
@@ -468,7 +538,7 @@ def explode_points(df_raw):
 
 df_points = explode_points(df_points)
 
-"""## **6.4. Lista**"""
+"""## **7.4. Lista**"""
 
 # Extrai lista com os IDs dos ativos filtrados
 point_ids = df_points['ID'].tolist()
@@ -494,9 +564,9 @@ set_with_dataframe(aba, df_points)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **7. REQUISIÇÃO: ALARMS**
+"""# **8. REQUISIÇÃO: ALARMS**
 
-## **7.1. Execução**
+## **8.1. Execução**
 """
 
 def get_alarms(token, base_url, machine_ids, origem):
@@ -592,11 +662,11 @@ for origem, base_url in BASE_URLS.items():
 
 df_alarms = pd.concat(dfs, ignore_index=True)
 
-"""## **7.2. DataFrame**"""
+"""## **8.2. DataFrame**"""
 
 print(f"Total de registros: {len(df_alarms)}")
 
-"""## **7.3. Carga de Sheets**"""
+"""## **8.3. Carga de Sheets**"""
 
 # Nome da planilha
 planilha_id = "172uMRb6-j8yitUVbCYp-iHWcSQGYpi6oqSX1gan2DXU"
@@ -614,9 +684,9 @@ set_with_dataframe(aba, df_alarms)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **8. REQUISIÇÃO: LAST MEASUREMENTS**
+"""# **9. REQUISIÇÃO: LAST MEASUREMENTS**
 
-## **8.1. Execução**
+## **9.1. Execução**
 """
 
 def get_measurements(token, base_url, machine_ids, origem):
@@ -670,7 +740,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_lastmeasurements = pd.concat(dfs, ignore_index=True)
 
-"""## **8.2. DataFrame**"""
+"""## **9.2. DataFrame**"""
 
 df_lastmeasurements["ReadingTimeUTC"] = pd.to_datetime(
     df_lastmeasurements["ReadingTimeUTC"],
@@ -681,7 +751,7 @@ df_lastmeasurements = df_lastmeasurements[
     df_lastmeasurements["ReadingTimeUTC"].notna()
 ]
 
-"""## **8.3. Carga de Sheets**"""
+"""## **9.3. Carga de Sheets**"""
 
 # Nome da planilha
 planilha_id = "1GmfGrRxJsOUAHG8yJ6Wfn67SSAhR5dgPQEZXplAFnJI"
@@ -699,9 +769,9 @@ set_with_dataframe(aba, df_lastmeasurements)
 
 print("Dados enviados com sucesso para o Google Sheets!")
 
-"""# **9. REQUISIÇÃO: MEASUREMENTS**
+"""# **10. REQUISIÇÃO: MEASUREMENTS**
 
-## **9.1. Execução**
+## **10.1. Execução**
 """
 
 def consultar_trends(point_ids, token, base_url, origem):
@@ -761,7 +831,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_trends = pd.concat(dfs, ignore_index=True)
 
-"""## **9.2. DataFrame**"""
+"""## **10.2. DataFrame**"""
 
 df_trends = df_trends[
     (df_trends['ChannelName'].isin(['Valor global', 'Overall'])) &
@@ -774,7 +844,7 @@ df_trendMeasurements = df_trends[colunas].drop_duplicates()
 
 print(f"{len(df_trendMeasurements)} medições finais")
 
-"""## **9.3. Carga de Sheets**"""
+"""## **10.3. Carga de Sheets**"""
 
 # Nome da planilha e aba
 planilha_id = "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo"
@@ -811,7 +881,7 @@ if not df_novos.empty:
 else:
     print("Nenhuma medição nova para inserir — tudo já está na planilha.")
 
-"""## **9.4. Tratamento de duplicatas**"""
+"""## **10.4. Tratamento de duplicatas**"""
 
 # Nome da planilha e aba
 planilha_id = "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo"
@@ -836,9 +906,9 @@ set_with_dataframe(aba, df_limpo, include_column_header=True)
 
 print(f"Removidas {len(df) - len(df_limpo)} duplicatas. Planilha atualizada com {len(df_limpo)} registros únicos.")
 
-"""# **10. REQUISIÇÃO: NOTES**
+"""# **11. REQUISIÇÃO: NOTES**
 
-## **10.1. Execução**
+## **11.1. Execução**
 """
 
 def get_notes(token, base_url, origem):
@@ -879,7 +949,7 @@ for origem, base_url in BASE_URLS.items():
 
 df_notes = pd.concat(dfs, ignore_index=True)
 
-"""## **10.2. Estrutura e organização**"""
+"""## **11.2. Estrutura e organização**"""
 
 df_notes = df_notes.merge(
     df_points[["ID", "path"]],
@@ -907,7 +977,7 @@ df_notes = df_notes[
     df_notes["path_1"] == df_notes["origem"].map(mapa)
 ]
 
-"""## **10.3. DataFrame**"""
+"""## **11.3. DataFrame**"""
 
 colunas = [
     "NoteID", "path", "PointID", "NodeName", "Author",
@@ -917,7 +987,7 @@ colunas = [
 
 df_notes = df_notes[colunas].drop_duplicates()
 
-"""## **10.4. Carga no Sheets**"""
+"""## **11.4. Carga no Sheets**"""
 
 # Nome da planilha
 planilha_id = "1A70P76NH1Lxt3h-Hg0V0NJBaPRHufbjC80m_qtkxfac"

@@ -143,7 +143,53 @@ for origem, base_url in BASE_URLS.items():
 
 df_hierarchy = pd.concat(dfs, ignore_index=True)
 
-"""## **3.5. Carga no Sheets**"""
+"""## **3.2. Estrutura e organização**"""
+
+# Garantir string
+df_hierarchy["path"] = df_hierarchy["path"].fillna("").astype(str)
+
+# Split do path
+df_path = df_hierarchy["path"].str.split(r"\\", expand=True)
+df_path.columns = [f"path_{i}" for i in range(df_path.shape[1])]
+
+# Concatenar mantendo TODAS as colunas originais
+df_hierarchy = pd.concat([df_hierarchy, df_path], axis=1)
+
+# Normalizar comparação
+df_hierarchy["path_1"] = df_hierarchy["path_1"].fillna("").str.strip().str.upper()
+df_hierarchy["origem"] = df_hierarchy["origem"].fillna("").str.strip().str.lower()
+
+# Mapeamento
+mapa = {
+    "ubu": "UBU",
+    "germano": "GERMANO"
+}
+
+# Filtrar
+df_hierarchy = df_hierarchy[
+    df_hierarchy["path_1"] == df_hierarchy["origem"].map(mapa)
+]
+
+# Selecionar colunas finais
+df_hierarchy = df_hierarchy[
+    [
+        "id",
+        "name",
+        "description",
+        "path",
+        "tag",
+        "active",
+        "typeName",
+        "typeId",
+        "status",
+        "src",
+        "parent_id",
+        "parent_name",
+        "origem"
+    ]
+].copy()
+
+"""## **3.3. Carga no Sheets**"""
 
 # Nome da planilha
 planilha_id = "1w3hVCO0DgMKd9EkeZCRlDy_UXPSMQgNaPJCAJtmgYjI"

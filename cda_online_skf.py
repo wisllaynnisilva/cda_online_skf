@@ -152,31 +152,45 @@ df_hierarchy["path"] = df_hierarchy["path"].fillna("").astype(str)
 df_path = df_hierarchy["path"].str.split(r"\\", expand=True)
 df_path.columns = [f"path_{i}" for i in range(df_path.shape[1])]
 
-# Concatenar mantendo TODAS as colunas originais
+# Concatenar mantendo colunas originais
 df_hierarchy = pd.concat([df_hierarchy, df_path], axis=1)
 
-# Normalizar comparação
-df_hierarchy["path_1"] = df_hierarchy["path_1"].fillna("").str.strip().str.upper()
-df_hierarchy["origem"] = df_hierarchy["origem"].fillna("").str.strip().str.lower()
+# Normalizar
+df_hierarchy["path_1"] = (
+    df_hierarchy["path_1"]
+    .fillna("")
+    .str.strip()
+    .str.upper()
+)
 
-# Mapeamento
+df_hierarchy["origem"] = (
+    df_hierarchy["origem"]
+    .fillna("")
+    .str.strip()
+    .str.lower()
+)
+
+# Mapeamento esperado
 mapa = {
     "ubu": "UBU",
     "germano": "GERMANO"
 }
 
-# Filtrar
-df_hierarchy = df_hierarchy[
-    df_hierarchy["path_1"] == df_hierarchy["origem"].map(mapa)
-]
+# Criar coluna validando coerência
+df_hierarchy["path_valido"] = (
+    df_hierarchy["path_1"]
+    == df_hierarchy["origem"].map(mapa)
+)
 
-# Selecionar colunas finais
+# Selecionar colunas
 df_hierarchy = df_hierarchy[
     [
         "id",
         "name",
         "description",
         "path",
+        "path_1",
+        "path_valido",
         "tag",
         "active",
         "typeName",

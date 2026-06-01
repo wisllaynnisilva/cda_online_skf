@@ -941,31 +941,6 @@ if not df_novos.empty:
 else:
     print("Nenhuma medição nova para inserir — tudo já está na planilha.")
 
-"""## **10.4. Tratamento de duplicatas**"""
-
-# Nome da planilha e aba
-planilha_id = "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo"
-nome_da_aba = "Sheet1"
-
-# Abre a planilha e aba
-planilha = gc.open_by_key(planilha_id)
-aba = planilha.worksheet(nome_da_aba)
-
-# Lê os dados da aba
-df = get_as_dataframe(aba, evaluate_formulas=True).dropna(how="all")
-
-# Remove duplicatas com base nas colunas chave
-colunas_chave = ['ReadingTimeUTC', 'PointID', 'Level']
-df_limpo = df.drop_duplicates(subset=colunas_chave, keep='first')
-
-# Limpa aba (opcional, mas garante que não fica lixo antigo abaixo)
-aba.clear()
-
-# Reescreve os dados limpos na planilha (com cabeçalho)
-set_with_dataframe(aba, df_limpo, include_column_header=True)
-
-print(f"Removidas {len(df) - len(df_limpo)} duplicatas. Planilha atualizada com {len(df_limpo)} registros únicos.")
-
 """# **11. REQUISIÇÃO: NOTES**
 
 ## **11.1. Execução**

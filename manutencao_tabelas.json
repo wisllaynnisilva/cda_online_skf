@@ -1,0 +1,120 @@
+{
+  "hierarquia": {
+    "id": "1w3hVCO0DgMKd9EkeZCRlDy_UXPSMQgNaPJCAJtmgYjI",
+    "chaves": [
+      "id",
+      "origem"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "machines": {
+    "id": "1gHImL_Hbr6teYb-sV4hzfoHExVFmTwlrjx93jgAsji0",
+    "chaves": [
+      "origem",
+      "id"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "submachines": {
+    "id": "115Ilr5gw8jkqVaHJmotdo5gVxwfLpx07tCTdMwQLLzc",
+    "chaves": [
+      "origem",
+      "id"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "parts": {
+    "id": "1ZOW0VeSOqSjCNZVvO48TxnAt6FdKhBSuCwFLq23Rd7k",
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "points": {
+    "id": "1ax7LyNRt06naxNwPXXb9kOGLUkmSbZFw9-IjhV4-_Gk",
+    "chaves": [
+      "origem",
+      "ID"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "alarms": {
+    "id": "172uMRb6-j8yitUVbCYp-iHWcSQGYpi6oqSX1gan2DXU",
+    "chaves": [
+      "origem",
+      "ID"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "lastmeasurements": {
+    "id": "1GmfGrRxJsOUAHG8yJ6Wfn67SSAhR5dgPQEZXplAFnJI",
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "trends": {
+    "id": "1uekxFKio9llwhP9CljTappvO3XaXrrV7g_WT2V3buIo",
+    "colunas_sem_titulo": [
+      "origem"
+    ],
+    "chaves": [
+      "ReadingTimeUTC",
+      "PointID",
+      "Level",
+      "origem"
+    ],
+    "colunas_data": [
+      "ReadingTimeUTC"
+    ],
+    "coluna_tempo_esperada": "ReadingTimeUTC",
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  },
+  "notes": {
+    "id": "1A70P76NH1Lxt3h-Hg0V0NJBaPRHufbjC80m_qtkxfac",
+    "chaves": [
+      "NoteID",
+      "origem"
+    ],
+    "dominios": {
+      "origem": [
+        "ubu",
+        "germano"
+      ]
+    }
+  }
+}

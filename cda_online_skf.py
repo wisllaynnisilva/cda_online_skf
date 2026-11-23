@@ -43,6 +43,10 @@ PLANILHAS = {
     "notes": "1A70P76NH1Lxt3h-Hg0V0NJBaPRHufbjC80m_qtkxfac",
 }
 
+# Tabelas históricas: ao passar deste nº de linhas, o arquivo é arquivado como
+# '<nome> revNNN' e a planilha ativa recomeça vazia (mesmo ID/link).
+LIMITE_LINHAS = {"trends": 1_000_000}
+
 # ---------------------------------------------------------------------------
 # 2. CLIENTE DA API (token único por origem, renovado em 401)
 # ---------------------------------------------------------------------------
@@ -407,6 +411,7 @@ def etapa_trends(df_points):
         chaves=["ReadingTimeUTC", "PointID", "Level", "origem"],
         colunas_data=["ReadingTimeUTC"],
         nome="trends",
+        limite_linhas=LIMITE_LINHAS["trends"],
     )
     return df
 

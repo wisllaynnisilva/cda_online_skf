@@ -102,6 +102,10 @@
         "ubu",
         "germano"
       ]
+    },
+    "correcao": {
+      "limpar_textos_nulos": true,
+      "deduplicar": "primeira"
     }
   },
   "notes": {

@@ -84,6 +84,10 @@ def api_get(origem, caminho, params=None):
         if resposta is not None and resposta.status_code == 404:
             return None
         raise
+    # 204 / corpo vazio = sem dados para esta máquina/ponto (o código antigo
+    # também ignorava respostas diferentes de 200)
+    if resp.status_code == 204 or not resp.content.strip():
+        return None
     return resp.json()
 
 
